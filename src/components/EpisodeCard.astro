@@ -1,0 +1,53 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getYouTubeThumb } from '../lib/youtube';
+
+interface Props {
+  episode: CollectionEntry<'episodes'>;
+  eager?: boolean;
+}
+
+const { episode, eager = false } = Astro.props;
+const { data, id } = episode;
+const thumb = data.thumbnail ?? getYouTubeThumb(data.youtube_url, 'maxres');
+const formattedDate = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(data.date);
+---
+
+<a
+  href={`/podcast/${id}`}
+  class="group block overflow-hidden rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] transition-all duration-300 hover:-translate-y-1 hover:border-[var(--color-accent-ocra)]/40 hover:shadow-2xl hover:shadow-black/40"
+>
+  <div class="relative aspect-video overflow-hidden bg-[var(--color-bg-elevated)]">
+    {thumb && (
+      <img
+        src={thumb}
+        alt=""
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+      />
+    )}
+    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+    <span class="absolute bottom-3 right-3 rounded bg-black/70 px-2 py-0.5 text-xs font-medium text-[var(--color-text-primary)]">
+      {data.duration}
+    </span>
+  </div>
+
+  <div class="p-5">
+    <div class="flex items-center gap-2 text-xs text-[var(--color-text-muted)] uppercase tracking-wider">
+      <time datetime={data.date.toISOString()}>{formattedDate}</time>
+      {data.tags[0] && (
+        <>
+          <span>·</span>
+          <span class="text-[var(--color-accent-ocra)]">{data.tags[0]}</span>
+        </>
+      )}
+    </div>
+    <h3 class="mt-2 font-display text-xl leading-tight text-[var(--color-text-primary)] group-hover:text-[var(--color-accent-ocra)] transition-colors">
+      {data.title}
+    </h3>
+    {data.description && (
+      <p class="mt-2 text-sm text-[var(--color-text-secondary)] line-clamp-2">{data.description}</p>
+    )}
+  </div>
+</a>

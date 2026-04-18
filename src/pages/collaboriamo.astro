@@ -1,0 +1,86 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import StatsCounter from '../components/StatsCounter.astro';
+
+const site = await getEntry('pages', 'site');
+const stats = site?.data.stats ?? {};
+const contact = site?.data.contact ?? {};
+
+type StatItem = { value: string; label: string; suffix?: string };
+const statsItems: StatItem[] = [
+  { value: stats.followers_ig ?? '7500', label: 'Follower Instagram', suffix: '+' },
+  { value: stats.quarterly_views ?? '900000', label: 'Visualizzazioni trimestrali', suffix: '+' },
+];
+if (stats.custom_value_1 && stats.custom_label_1) {
+  statsItems.push({ value: stats.custom_value_1, label: stats.custom_label_1 });
+}
+
+const email = contact.email ?? 'info@scomodopodcast.net';
+const waDigits = (contact.whatsapp ?? '').replace(/\D/g, '');
+---
+
+<BaseLayout
+  title="Collaboriamo"
+  description="Sponsor, partnership e collaborazioni editoriali con Scomodo Podcast."
+>
+  <section class="mx-auto max-w-4xl px-6 pt-8 md:pt-16 pb-16 text-center">
+    <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-accent-ocra)]">Collaboriamo</p>
+    <h1 class="mt-4 font-display text-4xl md:text-6xl leading-[1.05]">
+      Vuoi raggiungere chi il vino lo <span class="italic text-[var(--color-accent-wine)]">beve davvero</span>?
+    </h1>
+    <p class="mt-6 text-lg text-[var(--color-text-secondary)] max-w-2xl mx-auto leading-relaxed">
+      Stiamo preparando i pacchetti di collaborazione per brand e partner del mondo vino. Nel frattempo, se vuoi parlarci di una possibile partnership, scrivici direttamente.
+    </p>
+  </section>
+
+  <StatsCounter items={statsItems} />
+
+  <section class="mx-auto max-w-4xl px-6 py-20">
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 md:col-span-1">
+        <p class="text-xs uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Audience</p>
+        <p class="font-display text-2xl leading-tight">Appassionati, ristoratori, nuove generazioni del vino</p>
+      </div>
+      <div class="rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 md:col-span-1">
+        <p class="text-xs uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Piattaforme</p>
+        <p class="font-display text-2xl leading-tight">Instagram, YouTube, Spotify</p>
+      </div>
+      <div class="rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 md:col-span-1">
+        <p class="text-xs uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Formati</p>
+        <p class="font-display text-2xl leading-tight">Puntate branded, menzioni, contenuti dedicati</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="mx-auto max-w-3xl px-6 py-16 text-center">
+    <h2 class="font-display text-3xl md:text-4xl">Parliamone</h2>
+    <p class="mt-3 text-[var(--color-text-secondary)]">
+      Ci scriviamo e capiamo se c'è un progetto che ha senso per entrambi.
+    </p>
+    <div class="mt-8 flex flex-wrap gap-3 justify-center">
+      <a
+        href={`mailto:${email}?subject=Partnership%20Scomodo%20Podcast`}
+        class="inline-flex items-center gap-2 rounded bg-[var(--color-accent-wine)] px-6 py-3 text-sm font-medium hover:bg-[var(--color-accent-wine)]/90 transition-colors"
+      >
+        Scrivici via email →
+      </a>
+      {waDigits && (
+        <a
+          href={`https://wa.me/${waDigits}`}
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-2 rounded border border-[var(--color-border-subtle)] px-6 py-3 text-sm hover:border-[var(--color-accent-ocra)] transition-colors"
+        >
+          WhatsApp →
+        </a>
+      )}
+      <a
+        href="/contatti"
+        class="inline-flex items-center gap-2 px-6 py-3 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+      >
+        Usa il form →
+      </a>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,90 @@
+---
+const links = [
+  { href: '/', label: 'Home' },
+  { href: '/podcast', label: 'Podcast' },
+  { href: '/chi-siamo', label: 'Chi siamo' },
+  { href: '/collaboriamo', label: 'Collaboriamo' },
+  { href: '/contatti', label: 'Contatti' },
+];
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+---
+
+<header
+  id="site-nav"
+  class="fixed top-0 left-0 right-0 z-50 border-b border-[var(--color-border-subtle)] bg-[var(--color-bg-base)]/80 backdrop-blur-md transition-[padding] duration-200"
+>
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+    <a href="/" class="flex items-center hover:opacity-80 transition-opacity" aria-label="Scomodo Podcast — Home">
+      <img
+        src="/images/logo.png"
+        alt="Scomodo Podcast"
+        width="150"
+        height="84"
+        class="h-9 w-auto"
+      />
+    </a>
+
+    <button
+      type="button"
+      id="nav-toggle"
+      aria-label="Apri menu"
+      aria-expanded="false"
+      class="md:hidden p-2 -mr-2 text-[var(--color-text-primary)]"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+        <line x1="4" y1="7" x2="20" y2="7" />
+        <line x1="4" y1="12" x2="20" y2="12" />
+        <line x1="4" y1="17" x2="20" y2="17" />
+      </svg>
+    </button>
+
+    <ul class="hidden md:flex items-center gap-8 text-sm">
+      {links.map((l) => {
+        const active = current === l.href || (l.href !== '/' && current.startsWith(l.href));
+        return (
+          <li>
+            <a
+              href={l.href}
+              class:list={[
+                'transition-colors',
+                active
+                  ? 'text-[var(--color-text-primary)]'
+                  : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]',
+              ]}
+            >
+              {l.label}
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  </nav>
+
+  <div id="nav-mobile" class="hidden md:hidden border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
+    <ul class="flex flex-col px-6 py-4 gap-4 text-sm">
+      {links.map((l) => (
+        <li>
+          <a href={l.href} class="block py-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]">
+            {l.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</header>
+
+<script>
+  const nav = document.getElementById('site-nav');
+  const btn = document.getElementById('nav-toggle');
+  const mobile = document.getElementById('nav-mobile');
+  btn?.addEventListener('click', () => {
+    const open = mobile?.classList.toggle('hidden') === false;
+    btn.setAttribute('aria-expanded', String(open));
+  });
+  const onScroll = () => {
+    if (!nav) return;
+    if (window.scrollY > 40) nav.classList.add('shadow-lg');
+    else nav.classList.remove('shadow-lg');
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+</script>

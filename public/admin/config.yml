@@ -1,0 +1,105 @@
+backend:
+  name: git-gateway
+  branch: main
+
+publish_mode: editorial_workflow
+media_folder: "public/uploads"
+public_folder: "/uploads"
+site_url: "https://scomodo.net"
+logo_url: "https://scomodo.net/images/logo.png"
+locale: "it"
+
+collections:
+  - name: "episodes"
+    label: "Puntate"
+    label_singular: "Puntata"
+    folder: "src/content/episodes"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: title
+    extension: "md"
+    format: "frontmatter"
+    preview_path: "podcast/{{slug}}"
+    summary: "{{title}} · {{year}}-{{month}}-{{day}}"
+    sortable_fields: ['date', 'title']
+    view_filters:
+      - label: "In evidenza"
+        field: featured
+        pattern: true
+    view_groups:
+      - label: "Anno"
+        field: date
+        pattern: "\\d{4}"
+    fields:
+      - { label: "Titolo", name: "title", widget: "string" }
+      - { label: "Data", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+      - { label: "Durata", name: "duration", widget: "string", hint: "es. 42:15" }
+      - { label: "Descrizione breve", name: "description", widget: "text", required: false }
+      - { label: "URL YouTube", name: "youtube_url", widget: "string", hint: "URL completo youtube.com o youtu.be" }
+      - { label: "URL Spotify", name: "spotify_url", widget: "string", required: false, default: "" }
+      - { label: "Thumbnail custom", name: "thumbnail", widget: "image", required: false, hint: "Lascia vuoto per usare quella di YouTube" }
+      - label: "Tag"
+        name: "tags"
+        widget: "list"
+        default: []
+        hint: "Es. franciacorta, clima, comunicazione"
+      - label: "Ospiti"
+        name: "guests"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Nome", name: "name", widget: "string" }
+          - { label: "Ruolo", name: "role", widget: "string", required: false }
+          - { label: "Instagram", name: "instagram_url", widget: "string", required: false }
+      - label: "Vini citati"
+        name: "wines_mentioned"
+        widget: "list"
+        required: false
+        fields:
+          - { label: "Nome vino", name: "name", widget: "string" }
+          - { label: "Cantina", name: "winery", widget: "string", required: false }
+          - { label: "Link", name: "link", widget: "string", required: false }
+      - { label: "In evidenza in home", name: "featured", widget: "boolean", default: false }
+      - { label: "Show notes", name: "body", widget: "markdown" }
+
+  - name: "pages"
+    label: "Pagine (impostazioni)"
+    files:
+      - name: "site"
+        label: "Sito · Settings / Chi siamo / Contatti / Stats"
+        file: "src/content/pages/site.json"
+        format: "json"
+        fields:
+          - label: "Impostazioni sito"
+            name: "settings"
+            widget: "object"
+            fields:
+              - { label: "Titolo sito", name: "site_title", widget: "string" }
+              - { label: "Descrizione sito", name: "site_description", widget: "text" }
+              - { label: "Immagine OG default", name: "og_image", widget: "image", required: false }
+              - { label: "Override puntata in home (slug)", name: "homepage_hero_override", widget: "string", required: false, hint: "Lascia vuoto per usare la più recente" }
+          - label: "Chi siamo"
+            name: "about"
+            widget: "object"
+            fields:
+              - { label: "Manifesto progetto", name: "manifesto", widget: "text" }
+              - { label: "Bio Marta", name: "marta_bio", widget: "text" }
+              - { label: "Bio Massimiliano", name: "massimiliano_bio", widget: "text" }
+          - label: "Contatti"
+            name: "contact"
+            widget: "object"
+            fields:
+              - { label: "Email", name: "email", widget: "string", required: false }
+              - { label: "WhatsApp", name: "whatsapp", widget: "string", required: false, hint: "Numero con prefisso internazionale, es. +393331234567" }
+              - { label: "Instagram URL", name: "instagram", widget: "string", required: false }
+              - { label: "YouTube URL", name: "youtube", widget: "string", required: false }
+              - { label: "Spotify URL", name: "spotify", widget: "string", required: false }
+              - { label: "TikTok URL", name: "tiktok", widget: "string", required: false }
+          - label: "Statistiche audience"
+            name: "stats"
+            widget: "object"
+            fields:
+              - { label: "Follower Instagram", name: "followers_ig", widget: "string" }
+              - { label: "Visualizzazioni trimestrali", name: "quarterly_views", widget: "string" }
+              - { label: "Etichetta custom (opzionale)", name: "custom_label_1", widget: "string", required: false }
+              - { label: "Valore custom (opzionale)", name: "custom_value_1", widget: "string", required: false }

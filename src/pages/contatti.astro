@@ -1,0 +1,146 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const site = await getEntry('pages', 'site');
+const contact = site?.data.contact ?? {};
+const waDigits = (contact.whatsapp ?? '').replace(/\D/g, '');
+
+const socials = [
+  { href: contact.instagram, label: 'Instagram' },
+  { href: contact.youtube, label: 'YouTube' },
+  { href: contact.spotify, label: 'Spotify' },
+  { href: contact.tiktok, label: 'TikTok' },
+].filter((s) => s.href);
+---
+
+<BaseLayout title="Contatti" description="Scrivici per partnership, interviste, stampa o altro.">
+  <section class="mx-auto max-w-4xl px-6 pt-8 md:pt-16 pb-16">
+    <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-accent-ocra)]">Contatti</p>
+    <h1 class="mt-4 font-display text-4xl md:text-6xl leading-[1.05]">Scrivici.</h1>
+    <p class="mt-5 text-lg text-[var(--color-text-secondary)] max-w-2xl">
+      Partnership, interviste, richieste stampa o semplicemente un commento. Scegli il canale che preferisci.
+    </p>
+  </section>
+
+  <section class="mx-auto max-w-4xl px-6 pb-16">
+    <div class="grid md:grid-cols-2 gap-4">
+      {contact.email && (
+        <a
+          href={`mailto:${contact.email}`}
+          class="group flex flex-col rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 hover:border-[var(--color-accent-ocra)] transition-colors"
+        >
+          <span class="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">Email</span>
+          <span class="mt-2 font-display text-2xl group-hover:text-[var(--color-accent-ocra)] transition-colors break-all">
+            {contact.email}
+          </span>
+        </a>
+      )}
+      {waDigits && (
+        <a
+          href={`https://wa.me/${waDigits}`}
+          target="_blank"
+          rel="noopener"
+          class="group flex flex-col rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] p-6 hover:border-[var(--color-accent-ocra)] transition-colors"
+        >
+          <span class="text-xs uppercase tracking-widest text-[var(--color-text-muted)]">WhatsApp</span>
+          <span class="mt-2 font-display text-2xl group-hover:text-[var(--color-accent-ocra)] transition-colors">
+            Scrivici su WhatsApp
+          </span>
+        </a>
+      )}
+    </div>
+
+    {socials.length > 0 && (
+      <div class="mt-10 flex flex-wrap gap-3">
+        {socials.map((s) => (
+          <a
+            href={s.href}
+            target="_blank"
+            rel="noopener"
+            class="rounded border border-[var(--color-border-subtle)] px-4 py-2 text-sm hover:border-[var(--color-accent-ocra)] transition-colors"
+          >
+            {s.label} →
+          </a>
+        ))}
+      </div>
+    )}
+  </section>
+
+  <section class="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
+    <div class="mx-auto max-w-2xl px-6 py-16">
+      <h2 class="font-display text-3xl">Form</h2>
+      <p class="mt-2 text-[var(--color-text-secondary)]">
+        Se preferisci, scrivici direttamente qui. Ti rispondiamo via email.
+      </p>
+
+      <form
+        name="contact"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        class="mt-8 space-y-5"
+      >
+        <input type="hidden" name="form-name" value="contact" />
+        <p class="hidden">
+          <label>Non compilare: <input name="bot-field" /></label>
+        </p>
+
+        <div>
+          <label for="name" class="block text-xs uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Nome</label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            required
+            class="w-full rounded border border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] px-4 py-3 text-[var(--color-text-primary)] focus:border-[var(--color-accent-ocra)] focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label for="email" class="block text-xs uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            class="w-full rounded border border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] px-4 py-3 text-[var(--color-text-primary)] focus:border-[var(--color-accent-ocra)] focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label for="type" class="block text-xs uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Tipo richiesta</label>
+          <select
+            id="type"
+            name="type"
+            required
+            class="w-full rounded border border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] px-4 py-3 text-[var(--color-text-primary)] focus:border-[var(--color-accent-ocra)] focus:outline-none"
+          >
+            <option value="sponsorship">Sponsorship / Partnership</option>
+            <option value="intervista">Candidatura ospite / intervista</option>
+            <option value="media">Richiesta stampa / media</option>
+            <option value="altro">Altro</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="message" class="block text-xs uppercase tracking-widest text-[var(--color-text-muted)] mb-2">Messaggio</label>
+          <textarea
+            id="message"
+            name="message"
+            rows="6"
+            required
+            class="w-full rounded border border-[var(--color-border-subtle)] bg-[var(--color-bg-base)] px-4 py-3 text-[var(--color-text-primary)] focus:border-[var(--color-accent-ocra)] focus:outline-none resize-y"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="inline-flex items-center gap-2 rounded bg-[var(--color-accent-wine)] px-6 py-3 text-sm font-medium hover:bg-[var(--color-accent-wine)]/90 transition-colors"
+        >
+          Invia messaggio →
+        </button>
+      </form>
+    </div>
+  </section>
+</BaseLayout>

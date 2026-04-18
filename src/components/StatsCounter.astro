@@ -1,0 +1,76 @@
+---
+interface StatItem {
+  value: string;
+  label: string;
+  suffix?: string;
+}
+interface Props {
+  items: StatItem[];
+  class?: string;
+}
+const { items, class: className = '' } = Astro.props;
+---
+
+<section class:list={['border-y border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]', className]}>
+  <div class="mx-auto max-w-6xl px-6 py-14">
+    <div class="grid gap-10 md:grid-cols-3 text-center">
+      {items.map((item) => (
+        <div>
+          <p
+            class="font-display text-5xl md:text-6xl text-[var(--color-text-primary)] tabular-nums"
+            data-counter={item.value}
+            data-suffix={item.suffix ?? ''}
+          >
+            {item.value}{item.suffix ?? ''}
+          </p>
+          <p class="mt-2 text-xs md:text-sm uppercase tracking-[0.2em] text-[var(--color-text-muted)]">
+            {item.label}
+          </p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  const counters = document.querySelectorAll<HTMLElement>('[data-counter]');
+  const formatNumber = (n: number) => new Intl.NumberFormat('it-IT').format(n);
+  const parseTarget = (raw: string) => {
+    const clean = raw.replace(/[^0-9]/g, '');
+    return parseInt(clean, 10) || 0;
+  };
+  const animate = (el: HTMLElement) => {
+    const targetRaw = el.dataset.counter ?? '0';
+    const suffix = el.dataset.suffix ?? '';
+    const target = parseTarget(targetRaw);
+    if (!target) return;
+    const duration = 1400;
+    const start = performance.now();
+    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - start) / duration);
+      const v = Math.round(easeOut(p) * target);
+      el.textContent = `${formatNumber(v)}${suffix}`;
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  };
+  const obs = new IntersectionObserver(
+    (entries) => {
+      for (const e of entries) {
+        if (e.isIntersecting) {
+          animate(e.target as HTMLElement);
+          obs.unobserve(e.target);
+        }
+      }
+    },
+    { threshold: 0.4 },
+  );
+  counters.forEach((c) => {
+    const target = parseInt((c.dataset.counter ?? '0').replace(/[^0-9]/g, ''), 10);
+    if (target > 0) {
+      c.textContent = `0${c.dataset.suffix ?? ''}`;
+      obs.observe(c);
+    }
+  });
+</script>

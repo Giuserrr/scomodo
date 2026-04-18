@@ -1,0 +1,39 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  canonical?: string;
+}
+
+const {
+  title,
+  description = 'Il podcast editoriale di Lei Studia Lui Stappa. Due generazioni, un calice, zero filtri.',
+  image = '/og-default.jpg',
+  type = 'website',
+  canonical,
+} = Astro.props;
+
+const siteTitle = 'Scomodo Podcast';
+const fullTitle = title === siteTitle ? title : `${title} · ${siteTitle}`;
+const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site ?? 'https://scomodo.net').toString();
+const imageURL = new URL(image, Astro.site ?? 'https://scomodo.net').toString();
+---
+
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonicalURL} />
+
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:type" content={type} />
+<meta property="og:image" content={imageURL} />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:site_name" content={siteTitle} />
+<meta property="og:locale" content="it_IT" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageURL} />

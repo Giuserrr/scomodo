@@ -1,0 +1,26 @@
+{
+  "settings": {
+    "site_title": "Scomodo Podcast",
+    "site_description": "Il podcast editoriale di Lei Studia Lui Stappa. Due generazioni, un calice, zero filtri.",
+    "og_image": "/og-default.jpg"
+  },
+  "about": {
+    "manifesto": "Scomodo nasce da un'idea semplice: il vino merita conversazioni vere. Niente toni devoti, niente gergo da sommelier, niente santini. Padre e figlia a confronto — una ristoratrice di lunga esperienza e una studentessa di Pollenzo — con ospiti che hanno qualcosa da dire davvero. Parliamo di chi fa il vino, di come lo si racconta, di cosa succede nei territori quando il clima cambia e i consumatori smettono di bere su comando. Un podcast per chi il vino lo ama abbastanza da volerlo vedere per quello che è.",
+    "marta_bio": "Marta Andreoli, studentessa all'Università di Scienze Gastronomiche di Pollenzo. Cresciuta tra sala e cantina, oggi porta lo sguardo della nuova generazione sui produttori, sui territori e sul modo in cui parliamo di vino.",
+    "massimiliano_bio": "Massimiliano Andreoli, ristoratore de Il Piccolo Lord a Piamborno, Valcamonica. Trent'anni di carta dei vini, di tavolate e di battaglie quotidiane contro il vino finto elegante. Il suo mestiere è far bere bene la gente."
+  },
+  "contact": {
+    "email": "info@scomodopodcast.net",
+    "whatsapp": "",
+    "instagram": "https://www.instagram.com/leistudialuistappa/",
+    "youtube": "https://www.youtube.com/@Scomodo_Podcast",
+    "spotify": "",
+    "tiktok": ""
+  },
+  "stats": {
+    "followers_ig": "7500",
+    "quarterly_views": "900000",
+    "custom_label_1": "Podcast",
+    "custom_value_1": "YouTube + Spotify"
+  }
+}

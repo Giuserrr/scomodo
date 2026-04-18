@@ -1,0 +1,203 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LiteYouTube from '../../components/LiteYouTube.astro';
+import EpisodeCard from '../../components/EpisodeCard.astro';
+import { getYouTubeThumb } from '../../lib/youtube';
+
+export async function getStaticPaths() {
+  const episodes = await getCollection('episodes');
+  return episodes.map((ep) => ({
+    params: { slug: ep.id },
+    props: { episode: ep },
+  }));
+}
+
+const { episode } = Astro.props;
+const { Content } = await render(episode);
+const { data } = episode;
+
+const allEpisodes = await getCollection('episodes');
+const related = allEpisodes
+  .filter((e) => e.id !== episode.id && e.data.tags.some((t) => data.tags.includes(t)))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+
+const ogImage = data.thumbnail ?? getYouTubeThumb(data.youtube_url, 'maxres') ?? undefined;
+const formattedDate = new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(data.date);
+
+const episodeSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'PodcastEpisode',
+  name: data.title,
+  datePublished: data.date.toISOString(),
+  description: data.description,
+  url: new URL(Astro.url.pathname, Astro.site).toString(),
+  associatedMedia: {
+    '@type': 'MediaObject',
+    contentUrl: data.youtube_url,
+  },
+  partOfSeries: {
+    '@type': 'PodcastSeries',
+    name: 'Scomodo Podcast',
+    url: 'https://scomodo.net',
+  },
+};
+---
+
+<BaseLayout
+  title={data.title}
+  description={data.description}
+  image={ogImage}
+  type="article"
+>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(episodeSchema)} />
+  </Fragment>
+
+  <article class="mx-auto max-w-4xl px-6 pt-8 md:pt-12 pb-24">
+    <nav class="text-sm text-[var(--color-text-muted)] mb-6">
+      <a href="/podcast" class="hover:text-[var(--color-text-primary)]">← Tutte le puntate</a>
+    </nav>
+
+    <header class="mb-10">
+      <div class="flex flex-wrap gap-3 text-xs uppercase tracking-[0.2em] text-[var(--color-accent-ocra)] mb-4">
+        {data.tags.map((tag) => (
+          <a href={`/podcast?tag=${encodeURIComponent(tag)}`} class="hover:opacity-80">#{tag}</a>
+        ))}
+      </div>
+      <h1 class="font-display text-4xl md:text-6xl leading-[1.05]">
+        {data.title}
+      </h1>
+      <div class="mt-5 flex flex-wrap gap-x-5 gap-y-1 text-sm text-[var(--color-text-secondary)]">
+        <time datetime={data.date.toISOString()}>{formattedDate}</time>
+        <span class="text-[var(--color-text-muted)]">·</span>
+        <span>{data.duration}</span>
+      </div>
+    </header>
+
+    <div class="mb-10">
+      <LiteYouTube url={data.youtube_url} title={data.title} />
+    </div>
+
+    <div class="mb-10 flex flex-wrap gap-3">
+      <a
+        href={data.youtube_url}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-2 rounded bg-[var(--color-accent-wine)] px-5 py-3 text-sm font-medium hover:bg-[var(--color-accent-wine)]/90 transition-colors"
+      >
+        Guarda su YouTube →
+      </a>
+      {data.spotify_url && (
+        <a
+          href={data.spotify_url}
+          target="_blank"
+          rel="noopener"
+          class="inline-flex items-center gap-2 rounded border border-[var(--color-border-subtle)] px-5 py-3 text-sm hover:border-[var(--color-accent-ocra)] transition-colors"
+        >
+          Ascolta su Spotify →
+        </a>
+      )}
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-10 md:gap-12">
+      <div class="md:col-span-2">
+        <div class="prose-editorial">
+          <Content />
+        </div>
+      </div>
+
+      <aside class="md:col-span-1 space-y-8">
+        {data.guests.length > 0 && (
+          <section>
+            <h2 class="text-xs uppercase tracking-[0.2em] text-[var(--color-accent-ocra)] mb-4">Ospiti</h2>
+            <ul class="space-y-4">
+              {data.guests.map((g) => (
+                <li class="border-l-2 border-[var(--color-border-subtle)] pl-4">
+                  <p class="font-medium">{g.name}</p>
+                  {g.role && <p class="text-sm text-[var(--color-text-secondary)]">{g.role}</p>}
+                  {g.instagram_url && (
+                    <a href={g.instagram_url} target="_blank" rel="noopener" class="text-xs text-[var(--color-accent-ocra)] hover:opacity-80">
+                      Instagram →
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {data.wines_mentioned.length > 0 && (
+          <section>
+            <h2 class="text-xs uppercase tracking-[0.2em] text-[var(--color-accent-ocra)] mb-4">Vini citati</h2>
+            <ul class="space-y-4">
+              {data.wines_mentioned.map((w) => (
+                <li class="border-l-2 border-[var(--color-accent-wine)] pl-4">
+                  <p class="font-display text-lg leading-tight">{w.name}</p>
+                  {w.winery && <p class="text-sm text-[var(--color-text-secondary)]">{w.winery}</p>}
+                  {w.link && (
+                    <a href={w.link} target="_blank" rel="noopener" class="text-xs text-[var(--color-accent-ocra)] hover:opacity-80">
+                      Scheda →
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <section>
+          <h2 class="text-xs uppercase tracking-[0.2em] text-[var(--color-accent-ocra)] mb-4">Condividi</h2>
+          <div class="flex flex-wrap gap-2 text-sm">
+            <a
+              class="rounded border border-[var(--color-border-subtle)] px-3 py-2 hover:border-[var(--color-accent-ocra)] transition-colors"
+              href={`https://wa.me/?text=${encodeURIComponent(data.title + ' — scomodo.net' + Astro.url.pathname)}`}
+              target="_blank"
+              rel="noopener"
+            >
+              WhatsApp
+            </a>
+            <a
+              class="rounded border border-[var(--color-border-subtle)] px-3 py-2 hover:border-[var(--color-accent-ocra)] transition-colors"
+              href={`https://t.me/share/url?url=${encodeURIComponent('https://scomodo.net' + Astro.url.pathname)}&text=${encodeURIComponent(data.title)}`}
+              target="_blank"
+              rel="noopener"
+            >
+              Telegram
+            </a>
+            <button
+              type="button"
+              data-copy-link
+              class="rounded border border-[var(--color-border-subtle)] px-3 py-2 hover:border-[var(--color-accent-ocra)] transition-colors"
+            >
+              Copia link
+            </button>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    {related.length > 0 && (
+      <section class="mt-24 border-t border-[var(--color-border-subtle)] pt-16">
+        <h2 class="font-display text-2xl md:text-3xl mb-8">Continua ad ascoltare</h2>
+        <div class="grid gap-6 md:grid-cols-3">
+          {related.map((ep) => <EpisodeCard episode={ep} />)}
+        </div>
+      </section>
+    )}
+  </article>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy-link]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        const original = btn.textContent;
+        btn.textContent = 'Copiato ✓';
+        setTimeout(() => (btn.textContent = original), 1800);
+      } catch {}
+    });
+  });
+</script>

@@ -1,0 +1,164 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LiteYouTube from '../components/LiteYouTube.astro';
+import EpisodeCard from '../components/EpisodeCard.astro';
+import StatsCounter from '../components/StatsCounter.astro';
+
+const allEpisodes = (await getCollection('episodes')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+
+const site = await getEntry('pages', 'site');
+const stats = site?.data.stats ?? {};
+const settings = site?.data.settings ?? {};
+
+const overrideSlug = settings.homepage_hero_override;
+const featured =
+  (overrideSlug && allEpisodes.find((e) => e.id === overrideSlug)) ||
+  allEpisodes.find((e) => e.data.featured) ||
+  allEpisodes[0];
+
+const recent = allEpisodes.filter((e) => e.id !== featured?.id).slice(0, 3);
+
+type StatItem = { value: string; label: string; suffix?: string };
+const statsItems: StatItem[] = [
+  { value: stats.followers_ig ?? '7500', label: 'Follower Instagram', suffix: '+' },
+  { value: stats.quarterly_views ?? '900000', label: 'Visualizzazioni trimestrali', suffix: '+' },
+];
+if (stats.custom_value_1 && stats.custom_label_1) {
+  statsItems.push({ value: stats.custom_value_1, label: stats.custom_label_1 });
+}
+
+const podcastSeriesSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'PodcastSeries',
+  name: 'Scomodo Podcast',
+  description: settings.site_description,
+  url: 'https://scomodo.net',
+  inLanguage: 'it',
+  webFeed: site?.data.contact?.youtube ?? 'https://www.youtube.com/@Scomodo_Podcast',
+};
+---
+
+<BaseLayout title="Scomodo Podcast" description={settings.site_description}>
+  <Fragment slot="head">
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(podcastSeriesSchema)} />
+  </Fragment>
+
+  {featured && (
+    <section class="mx-auto max-w-6xl px-6 pt-8 md:pt-16 pb-20 md:pb-28">
+      <div class="grid gap-10 md:grid-cols-5 md:items-center">
+        <div class="md:col-span-3 order-2 md:order-1">
+          <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-accent-ocra)]">
+            Ultima puntata
+          </p>
+          <h1 class="mt-4 font-display text-4xl md:text-6xl leading-[1.05] text-[var(--color-text-primary)]">
+            {featured.data.title}
+          </h1>
+          {featured.data.description && (
+            <p class="mt-5 text-lg text-[var(--color-text-secondary)] leading-relaxed max-w-xl">
+              {featured.data.description}
+            </p>
+          )}
+          <div class="mt-7 flex flex-wrap gap-3">
+            <a
+              href={featured.data.youtube_url}
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center gap-2 rounded bg-[var(--color-accent-wine)] px-5 py-3 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-accent-wine)]/90 transition-colors"
+            >
+              Guarda su YouTube
+              <span aria-hidden="true">→</span>
+            </a>
+            {featured.data.spotify_url && (
+              <a
+                href={featured.data.spotify_url}
+                target="_blank"
+                rel="noopener"
+                class="inline-flex items-center gap-2 rounded border border-[var(--color-border-subtle)] px-5 py-3 text-sm font-medium text-[var(--color-text-primary)] hover:border-[var(--color-accent-ocra)] transition-colors"
+              >
+                Ascolta su Spotify
+              </a>
+            )}
+            <a
+              href={`/podcast/${featured.id}`}
+              class="inline-flex items-center gap-2 px-5 py-3 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+            >
+              Show notes →
+            </a>
+          </div>
+        </div>
+        <div class="md:col-span-2 order-1 md:order-2">
+          <LiteYouTube url={featured.data.youtube_url} title={featured.data.title} />
+        </div>
+      </div>
+    </section>
+  )}
+
+  <StatsCounter items={statsItems} />
+
+  <section class="mx-auto max-w-6xl px-6 py-24">
+    <div class="grid gap-12 md:grid-cols-2 items-center">
+      <div>
+        <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-accent-ocra)]">
+          Chi siamo
+        </p>
+        <h2 class="mt-4 font-display text-3xl md:text-4xl leading-tight">
+          Due generazioni. Un calice. <span class="italic text-[var(--color-accent-wine)]">Zero filtri.</span>
+        </h2>
+        <p class="mt-5 text-[var(--color-text-secondary)] leading-relaxed">
+          Marta studia Scienze Gastronomiche a Pollenzo. Massimiliano fa il ristoratore da trent'anni. Parlano di vino come si parla a tavola: con curiosità, senza reverenza, e con la libertà di dire quello che gli altri non dicono.
+        </p>
+        <a href="/chi-siamo" class="mt-6 inline-block text-sm text-[var(--color-accent-ocra)] border-b border-current hover:opacity-80">
+          Scopri chi siamo →
+        </a>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="aspect-[3/4] rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] flex items-end p-4">
+          <span class="font-display text-lg">Marta</span>
+        </div>
+        <div class="aspect-[3/4] rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] flex items-end p-4 mt-8">
+          <span class="font-display text-lg">Massimiliano</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {recent.length > 0 && (
+    <section class="mx-auto max-w-6xl px-6 py-20">
+      <div class="flex items-end justify-between mb-10">
+        <div>
+          <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-accent-ocra)]">Archivio</p>
+          <h2 class="mt-2 font-display text-3xl md:text-4xl">Altre puntate</h2>
+        </div>
+        <a href="/podcast" class="text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-accent-ocra)]">
+          Vedi tutte →
+        </a>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3">
+        {recent.map((ep) => <EpisodeCard episode={ep} />)}
+      </div>
+    </section>
+  )}
+
+  <section class="mx-auto max-w-6xl px-6 py-24">
+    <div class="rounded-2xl border border-[var(--color-border-subtle)] bg-gradient-to-br from-[var(--color-bg-surface)] to-[var(--color-bg-elevated)] p-10 md:p-16 text-center">
+      <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-accent-ocra)]">Collaboriamo</p>
+      <h2 class="mt-4 font-display text-3xl md:text-5xl leading-tight max-w-3xl mx-auto">
+        La nostra audience è fatta di appassionati, ristoratori, giovani professionisti del vino.
+      </h2>
+      <p class="mt-5 text-[var(--color-text-secondary)] max-w-2xl mx-auto">
+        {statsItems[0]?.value}+ follower Instagram, {statsItems[1]?.value}+ visualizzazioni trimestrali. Vuoi raggiungerli?
+      </p>
+      <a
+        href="/collaboriamo"
+        class="mt-8 inline-flex items-center gap-2 rounded bg-[var(--color-accent-wine)] px-6 py-3 text-sm font-medium hover:bg-[var(--color-accent-wine)]/90 transition-colors"
+      >
+        Parliamone
+        <span aria-hidden="true">→</span>
+      </a>
+    </div>
+  </section>
+</BaseLayout>

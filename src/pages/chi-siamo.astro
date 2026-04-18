@@ -1,0 +1,60 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const site = await getEntry('pages', 'site');
+const about = site?.data.about ?? {};
+const contact = site?.data.contact ?? {};
+---
+
+<BaseLayout
+  title="Chi siamo"
+  description="Marta e Massimiliano Andreoli: una studentessa di Pollenzo e un ristoratore di Valcamonica raccontano il vino senza filtri."
+>
+  <section class="mx-auto max-w-6xl px-6 pt-8 md:pt-16 pb-16">
+    <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-accent-ocra)]">Chi siamo</p>
+    <h1 class="mt-4 font-display text-4xl md:text-6xl leading-[1.05] max-w-3xl">
+      Due generazioni. Un calice. <span class="italic text-[var(--color-accent-wine)]">Zero filtri.</span>
+    </h1>
+  </section>
+
+  <section class="mx-auto max-w-6xl px-6 pb-24">
+    <div class="grid md:grid-cols-2 gap-12 md:gap-16">
+      <article class="flex flex-col">
+        <div class="aspect-[3/4] rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] mb-6"></div>
+        <h2 class="font-display text-3xl">Marta Andreoli</h2>
+        <p class="mt-1 text-sm uppercase tracking-widest text-[var(--color-text-muted)]">
+          Studentessa, Università di Scienze Gastronomiche di Pollenzo
+        </p>
+        <p class="mt-5 text-[var(--color-text-secondary)] leading-relaxed">
+          {about.marta_bio}
+        </p>
+        {contact.instagram && (
+          <a href={contact.instagram} target="_blank" rel="noopener" class="mt-4 inline-block text-sm text-[var(--color-accent-ocra)] border-b border-current hover:opacity-80 w-fit">
+            Instagram →
+          </a>
+        )}
+      </article>
+
+      <article class="flex flex-col md:mt-16">
+        <div class="aspect-[3/4] rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] mb-6"></div>
+        <h2 class="font-display text-3xl">Massimiliano Andreoli</h2>
+        <p class="mt-1 text-sm uppercase tracking-widest text-[var(--color-text-muted)]">
+          Ristoratore, Il Piccolo Lord · Piamborno, Valcamonica
+        </p>
+        <p class="mt-5 text-[var(--color-text-secondary)] leading-relaxed">
+          {about.massimiliano_bio}
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)]">
+    <div class="mx-auto max-w-4xl px-6 py-20 md:py-28">
+      <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-accent-ocra)] mb-5">Il progetto</p>
+      <div class="prose-editorial">
+        <p class="text-lg leading-relaxed">{about.manifesto}</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

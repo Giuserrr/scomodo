@@ -1,0 +1,42 @@
+---
+import { getEntry } from 'astro:content';
+const site = await getEntry('pages', 'site');
+const contact = site?.data.contact ?? {};
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-[var(--color-border-subtle)] bg-[var(--color-bg-surface)] mt-24">
+  <div class="mx-auto max-w-6xl px-6 py-14 grid gap-10 md:grid-cols-3">
+    <div>
+      <img src="/images/logo.png" alt="Scomodo Podcast" width="150" height="84" class="h-14 w-auto" />
+      <p class="mt-4 text-[var(--color-text-secondary)] text-sm leading-relaxed max-w-sm">
+        Il podcast editoriale di Lei Studia Lui Stappa. Due generazioni, un calice, zero filtri.
+      </p>
+    </div>
+
+    <div>
+      <p class="text-xs tracking-widest uppercase text-[var(--color-text-muted)] mb-4">Segui</p>
+      <ul class="flex flex-col gap-2 text-sm">
+        {contact.instagram && <li><a class="text-[var(--color-text-secondary)] hover:text-[var(--color-accent-ocra)]" href={contact.instagram}>Instagram</a></li>}
+        {contact.youtube && <li><a class="text-[var(--color-text-secondary)] hover:text-[var(--color-accent-ocra)]" href={contact.youtube}>YouTube</a></li>}
+        {contact.spotify && <li><a class="text-[var(--color-text-secondary)] hover:text-[var(--color-accent-ocra)]" href={contact.spotify}>Spotify</a></li>}
+        {contact.tiktok && <li><a class="text-[var(--color-text-secondary)] hover:text-[var(--color-accent-ocra)]" href={contact.tiktok}>TikTok</a></li>}
+      </ul>
+    </div>
+
+    <div>
+      <p class="text-xs tracking-widest uppercase text-[var(--color-text-muted)] mb-4">Contatti</p>
+      <ul class="flex flex-col gap-2 text-sm">
+        {contact.email && <li><a class="text-[var(--color-text-secondary)] hover:text-[var(--color-accent-ocra)]" href={`mailto:${contact.email}`}>{contact.email}</a></li>}
+        <li><a class="text-[var(--color-text-secondary)] hover:text-[var(--color-accent-ocra)]" href="/collaboriamo">Collaboriamo</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="border-t border-[var(--color-border-subtle)]">
+    <div class="mx-auto max-w-6xl px-6 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs text-[var(--color-text-muted)]">
+      <p>© {year} Scomodo Podcast · Lei Studia Lui Stappa</p>
+      <p>Sito costruito con Astro. Ospitato su Netlify.</p>
+    </div>
+  </div>
+</footer>
