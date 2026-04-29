@@ -184,12 +184,34 @@ const podcastSeriesSchema = {
       </div>
 
       <div class="grid grid-cols-2 gap-4">
-        <div class="aspect-[3/4] rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] flex items-end p-4">
-          <span class="font-display text-lg">Marta</span>
-        </div>
-        <div class="aspect-[3/4] rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] flex items-end p-4 mt-8">
-          <span class="font-display text-lg">Massimiliano</span>
-        </div>
+        <figure class="relative aspect-[3/4] overflow-hidden rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)]">
+          <picture>
+            <source type="image/webp" srcset="/images/team/marta-andreoli.webp" />
+            <img
+              src="/images/team/marta-andreoli.jpg"
+              alt="Marta Andreoli"
+              loading="lazy"
+              decoding="async"
+              class="h-full w-full object-cover"
+            />
+          </picture>
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+          <figcaption class="absolute bottom-3 left-4 font-display text-lg text-[var(--color-text-primary)]">Marta</figcaption>
+        </figure>
+        <figure class="relative aspect-[3/4] overflow-hidden rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] mt-8">
+          <picture>
+            <source type="image/webp" srcset="/images/team/massimiliano-andreoli.webp" />
+            <img
+              src="/images/team/massimiliano-andreoli.jpg"
+              alt="Massimiliano Andreoli"
+              loading="lazy"
+              decoding="async"
+              class="h-full w-full object-cover"
+            />
+          </picture>
+          <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+          <figcaption class="absolute bottom-3 left-4 font-display text-lg text-[var(--color-text-primary)]">Massimiliano</figcaption>
+        </figure>
       </div>
     </div>
   </section>

@@ -21,7 +21,18 @@ const contact = site?.data.contact ?? {};
   <section class="mx-auto max-w-6xl px-6 pb-24">
     <div class="grid md:grid-cols-2 gap-12 md:gap-16">
       <article class="flex flex-col">
-        <div class="aspect-[3/4] rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] mb-6"></div>
+        <figure class="aspect-[3/4] overflow-hidden rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] mb-6">
+          <picture>
+            <source type="image/webp" srcset="/images/team/marta-andreoli.webp" />
+            <img
+              src="/images/team/marta-andreoli.jpg"
+              alt="Marta Andreoli"
+              loading="lazy"
+              decoding="async"
+              class="h-full w-full object-cover"
+            />
+          </picture>
+        </figure>
         <h2 class="font-display text-3xl">Marta Andreoli</h2>
         <p class="mt-1 text-sm uppercase tracking-widest text-[var(--color-text-muted)]">
           Studentessa, Università di Scienze Gastronomiche di Pollenzo
@@ -37,7 +48,18 @@ const contact = site?.data.contact ?? {};
       </article>
 
       <article class="flex flex-col md:mt-16">
-        <div class="aspect-[3/4] rounded-lg bg-[var(--color-bg-elevated)] border border-[var(--color-border-subtle)] mb-6"></div>
+        <figure class="aspect-[3/4] overflow-hidden rounded-lg border border-[var(--color-border-subtle)] bg-[var(--color-bg-elevated)] mb-6">
+          <picture>
+            <source type="image/webp" srcset="/images/team/massimiliano-andreoli.webp" />
+            <img
+              src="/images/team/massimiliano-andreoli.jpg"
+              alt="Massimiliano Andreoli"
+              loading="lazy"
+              decoding="async"
+              class="h-full w-full object-cover"
+            />
+          </picture>
+        </figure>
         <h2 class="font-display text-3xl">Massimiliano Andreoli</h2>
         <p class="mt-1 text-sm uppercase tracking-widest text-[var(--color-text-muted)]">
           Ristoratore, Il Piccolo Lord · Piamborno, Valcamonica
