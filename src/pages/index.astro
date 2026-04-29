@@ -19,6 +19,16 @@ const featured =
   allEpisodes.find((e) => e.data.featured) ||
   allEpisodes[0];
 
+const sortedAsc = [...allEpisodes].sort(
+  (a, b) => a.data.date.getTime() - b.data.date.getTime(),
+);
+const featuredNumber = featured
+  ? sortedAsc.findIndex((e) => e.id === featured.id) + 1
+  : 0;
+const featuredFormattedDate = featured
+  ? new Intl.DateTimeFormat('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }).format(featured.data.date)
+  : '';
+
 const recent = allEpisodes.filter((e) => e.id !== featured?.id).slice(0, 3);
 
 type StatItem = { value: string; label: string; suffix?: string };
@@ -47,50 +57,108 @@ const podcastSeriesSchema = {
   </Fragment>
 
   {featured && (
-    <section class="mx-auto max-w-6xl px-6 pt-8 md:pt-16 pb-20 md:pb-28">
-      <div class="grid gap-10 md:grid-cols-5 md:items-center">
-        <div class="md:col-span-3 order-2 md:order-1">
-          <p class="text-xs uppercase tracking-[0.25em] text-[var(--color-accent-ocra)]">
-            Ultima puntata
-          </p>
-          <h1 class="mt-4 font-display text-4xl md:text-6xl leading-[1.05] text-[var(--color-text-primary)]">
-            {featured.data.title}
-          </h1>
-          {featured.data.description && (
-            <p class="mt-5 text-lg text-[var(--color-text-secondary)] leading-relaxed max-w-xl">
-              {featured.data.description}
-            </p>
+    <section class="border-b border-[var(--color-border-subtle)]">
+      <div class="mx-auto max-w-6xl px-6 pt-8 md:pt-14 pb-16 md:pb-24">
+        <div class="flex flex-wrap items-center gap-x-3 gap-y-2 mb-7 text-xs uppercase tracking-[0.22em]">
+          <span class="rounded-full bg-[var(--color-accent-wine)] px-3 py-1 font-medium text-[var(--color-text-primary)]">
+            Nuova puntata
+          </span>
+          {featuredNumber > 0 && (
+            <span class="text-[var(--color-accent-ocra)]">
+              Ep. {String(featuredNumber).padStart(2, '0')}
+            </span>
           )}
-          <div class="mt-7 flex flex-wrap gap-3">
-            <a
-              href={featured.data.youtube_url}
-              target="_blank"
-              rel="noopener"
-              class="inline-flex items-center gap-2 rounded bg-[var(--color-accent-wine)] px-5 py-3 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-accent-wine)]/90 transition-colors"
-            >
-              Guarda su YouTube
-              <span aria-hidden="true">→</span>
-            </a>
-            {featured.data.spotify_url && (
+          <span class="text-[var(--color-text-muted)]" aria-hidden="true">·</span>
+          <time class="text-[var(--color-text-secondary)]" datetime={featured.data.date.toISOString()}>
+            {featuredFormattedDate}
+          </time>
+          <span class="text-[var(--color-text-muted)]" aria-hidden="true">·</span>
+          <span class="text-[var(--color-text-secondary)]">{featured.data.duration}</span>
+        </div>
+
+        <div class="grid gap-10 md:grid-cols-5 md:items-start">
+          <div class="md:col-span-3 order-2 md:order-1">
+            <h1 class="font-display text-4xl md:text-6xl leading-[1.05] text-[var(--color-text-primary)]">
+              {featured.data.title}
+            </h1>
+
+            {featured.data.description && (
+              <p class="mt-5 text-lg text-[var(--color-text-secondary)] leading-relaxed max-w-xl">
+                {featured.data.description}
+              </p>
+            )}
+
+            {featured.data.tags.length > 0 && (
+              <div class="mt-6 flex flex-wrap gap-2">
+                {featured.data.tags.map((tag) => (
+                  <a
+                    href={`/podcast?tag=${encodeURIComponent(tag)}`}
+                    class="rounded-full border border-[var(--color-border-subtle)] px-3 py-1 text-xs uppercase tracking-wider text-[var(--color-text-secondary)] hover:border-[var(--color-accent-ocra)] hover:text-[var(--color-accent-ocra)] transition-colors"
+                  >
+                    #{tag}
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {featured.data.guests.length > 0 && (
+              <div class="mt-6 flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm">
+                <span class="text-xs uppercase tracking-[0.22em] text-[var(--color-text-muted)]">Con</span>
+                {featured.data.guests.map((g, i) => (
+                  <span class="text-[var(--color-text-primary)]">
+                    {g.instagram_url ? (
+                      <a href={g.instagram_url} target="_blank" rel="noopener" class="underline-offset-4 hover:text-[var(--color-accent-ocra)] hover:underline">
+                        {g.name}
+                      </a>
+                    ) : (
+                      g.name
+                    )}
+                    {g.role && (
+                      <span class="text-[var(--color-text-secondary)]"> — {g.role}</span>
+                    )}
+                    {i < featured.data.guests.length - 1 && (
+                      <span class="text-[var(--color-text-muted)]">,</span>
+                    )}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            <div class="mt-8 flex flex-wrap gap-3">
               <a
-                href={featured.data.spotify_url}
+                href={featured.data.youtube_url}
                 target="_blank"
                 rel="noopener"
-                class="inline-flex items-center gap-2 rounded border border-[var(--color-border-subtle)] px-5 py-3 text-sm font-medium text-[var(--color-text-primary)] hover:border-[var(--color-accent-ocra)] transition-colors"
+                class="inline-flex items-center gap-2 rounded bg-[var(--color-accent-wine)] px-5 py-3 text-sm font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-accent-wine)]/90 transition-colors"
               >
-                Ascolta su Spotify
+                Guarda su YouTube
+                <span aria-hidden="true">→</span>
               </a>
-            )}
-            <a
-              href={`/podcast/${featured.id}`}
-              class="inline-flex items-center gap-2 px-5 py-3 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-            >
-              Show notes →
-            </a>
+              {featured.data.spotify_url && (
+                <a
+                  href={featured.data.spotify_url}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center gap-2 rounded border border-[var(--color-border-subtle)] px-5 py-3 text-sm font-medium text-[var(--color-text-primary)] hover:border-[var(--color-accent-ocra)] transition-colors"
+                >
+                  Ascolta su Spotify
+                </a>
+              )}
+              <a
+                href={`/podcast/${featured.id}`}
+                class="inline-flex items-center gap-2 px-5 py-3 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+              >
+                Show notes →
+              </a>
+            </div>
           </div>
-        </div>
-        <div class="md:col-span-2 order-1 md:order-2">
-          <LiteYouTube url={featured.data.youtube_url} title={featured.data.title} />
+
+          <div class="md:col-span-2 order-1 md:order-2 md:sticky md:top-6">
+            <LiteYouTube url={featured.data.youtube_url} title={featured.data.title} />
+            <p class="mt-3 text-xs text-[var(--color-text-muted)] text-center">
+              {allEpisodes.length} {allEpisodes.length === 1 ? 'puntata pubblicata' : 'puntate pubblicate'} · <a href="/podcast" class="text-[var(--color-accent-ocra)] hover:opacity-80">archivio →</a>
+            </p>
+          </div>
         </div>
       </div>
     </section>

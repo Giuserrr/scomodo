@@ -17,7 +17,7 @@ wines_mentioned:
   - name: "Nome vino"
     winery: "Cantina"
     link: "https://example.com"
-featured: true
+featured: false
 ---
 
 ## Di cosa parliamo
