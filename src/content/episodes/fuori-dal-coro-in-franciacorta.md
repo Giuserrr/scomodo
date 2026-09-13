@@ -10,13 +10,11 @@ tags:
   - clima
   - comunicazione
 guests:
-  - name: "Ospite #1"
-    role: "Produttore, Franciacorta"
-    instagram_url: "https://instagram.com/"
-wines_mentioned:
-  - name: "Nome vino"
-    winery: "Cantina"
-    link: "https://example.com"
+  - name: "Daniele Gentile"
+    role: "Enologo e fondatore di Corte Fusia, Coccaglio (Monte Orfano)"
+  - name: "Laura Cugini"
+    role: "Progetto agricolo Corti Cugini, Gussago"
+wines_mentioned: []
 featured: false
 ---
 
@@ -35,7 +33,3 @@ La Franciacorta come osservatorio privilegiato per capire dove sta andando il vi
 
 > "Il problema non è il cambiamento climatico. Il problema è fingere che sia un'opportunità."
 
-## Link e approfondimenti
-
-- Sito cantina: [link]
-- Articoli citati: [link]
